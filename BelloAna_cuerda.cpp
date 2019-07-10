@@ -25,13 +25,14 @@ void eonda(double con, double longitud,double t0, double tf, int npuntos){
 	double Aactual[npuntos];
 	double Aold[npuntos];
 	double Anew[npuntos];
+	double Apresente[npuntos];
 	double A0=0.01;
-	
-	double dx= (tf- t0)/(npuntos-1);
-	double dt=(dx*0.1)/con;
-	double s=con*(dt/dx);
+	double dx=0.005;// dx de la ecuacion
+	double dt=(tf-t0)/(npuntos-1); //Para linspace de tiempo 
+	double deltat=(dx*0.5)/con;// de la ecuacion
+	double s=con*(deltat/dx);
 	double tiempo[npuntos];
-	double delta= (longitud)/(npuntos-1);
+	double delta= (longitud)/(npuntos-1);//pendientes condiciones iniciales.
 	double m=(A0)/(longitud/2.0);
 	double L[npuntos];
 	L[0]=0.0;
@@ -42,7 +43,7 @@ void eonda(double con, double longitud,double t0, double tf, int npuntos){
 
 	for(int i=1; i<npuntos ; i++)// para crear linspace con npuntos determinado
     {  
-     tiempo[i]= tiempo[i-1]+dx;
+     tiempo[i]= tiempo[i-1]+dt;
      L[i]=L[i-1]+delta;
     }
 
@@ -56,11 +57,14 @@ void eonda(double con, double longitud,double t0, double tf, int npuntos){
     	Aold[i]= ((-m)*i*delta)+(2.0*A0);
     }
 
-
-    /*for(int i=0; i<npuntos; i++)
+    //Para iniciar.
+    for(int i=0; i< npuntos;i++){
+    	Anew[i]= -Aold[i] + 2.0*Aold[i] + (con*(deltat/dx))*(con*(deltat/dx))*(Aold[i+1]+Aold[i-1]-(2.0*Aold[i]));
+    }
+    for(int i=0; i<npuntos; i++)
     {
-    	outfile  << tiempo[i] << "  " << i << "  " << Aold[i] << endl;
-    }*/
+    	outfile  << tiempo[i] << "  " << i << "  " << Aold[i] << "  " << Anew[i]<< endl;
+    }
 
 	outfile.close();
 }
