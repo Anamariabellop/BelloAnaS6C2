@@ -35,6 +35,7 @@ void eonda(double con, double longitud,double t0, double tf, int npuntos){
 	double delta= (longitud)/(npuntos-1);//pendientes condiciones iniciales.
 	double m=(A0)/(longitud/2.0);
 	double L[npuntos];
+	double matrizdatos[npuntos][10];
 	L[0]=0.0;
 	tiempo[0]=t0;
 
@@ -73,7 +74,7 @@ void eonda(double con, double longitud,double t0, double tf, int npuntos){
 	ofstream outfile2;
 	outfile2.open("cuerda2.txt");
 
-    for(int i=0; i<tf; i++){
+    for(int i=0; i<10; i++){
     	for(int j=0; i<npuntos; i++){
     		Anew[j]= ((2.0*Aactual[j]) + ((k*k)*(Aactual[j+1]+Aactual[j-1]-(2.0*Aactual[j]))))/2;	
     	}
@@ -84,7 +85,7 @@ void eonda(double con, double longitud,double t0, double tf, int npuntos){
     	Aactual[i]=Anew[i];//Actualizo actual con respecto a nuevo.
     }
 
-    for(int i=0; i<tf;i++){
+    for(int i=0; i<10;i++){
     	for(int i=0; i<npuntos; i++)
     	{
     	outfile2  << L[i] << "  " << i << "  " << Aold[i] << "  " << Anew[i]<< "  " << Aactual[i]<< endl;
