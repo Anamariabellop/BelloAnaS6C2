@@ -29,7 +29,7 @@ void eonda(double con, double longitud,double t0, double tf, int npuntos){
 	double A0=0.01;
 	double dx=0.005;// dx de la ecuacion
 	double dt=(tf-t0)/(npuntos-1); //Para linspace de tiempo 
-	double deltat=(dx*0.5)/con;// de la ecuacion
+	double deltat=(dx*0.9)/con;// de la ecuacion
 	double s=con*(deltat/dx);
 	double tiempo[npuntos];
 	double delta= (longitud)/(npuntos-1);//pendientes condiciones iniciales.
@@ -58,13 +58,42 @@ void eonda(double con, double longitud,double t0, double tf, int npuntos){
     }
 
     //Para iniciar.
+    double k=(con*(deltat/dx));
     for(int i=0; i< npuntos;i++){
-    	Anew[i]= -Aold[i] + 2.0*Aold[i] + (con*(deltat/dx))*(con*(deltat/dx))*(Aold[i+1]+Aold[i-1]-(2.0*Aold[i]));
+    	Anew[i]=  (2.0*Aold[i] + ((k*k)*(Aold[i+1]+Aold[i-1]-(2.0*Aold[i]))))/2;
+    	Aactual[i]=Anew[i];//Actualizo actual con respecto al nuevo.
     }
     for(int i=0; i<npuntos; i++)
     {
-    	outfile  << tiempo[i] << "  " << i << "  " << Aold[i] << "  " << Anew[i]<< endl;
+    	outfile  << L[i] << "  " << i << "  " << Aold[i] << "  " << Anew[i]<< "  " << Aactual[i]<< endl;
     }
 
 	outfile.close();
+
+	ofstream outfile2;
+	outfile2.open("cuerda2.txt");
+
+    for(int i=0; i<tf; i++){
+    	for(int j=0; i<npuntos; i++){
+    		Anew[j]= ((2.0*Aactual[j]) + ((k*k)*(Aactual[j+1]+Aactual[j-1]-(2.0*Aactual[j]))))/2;	
+    	}
+    }
+
+    for(int i=0; i< npuntos; i++){
+    	Aold[i]=Aactual[i];//Actualizo el viejo con respecto a actual.
+    	Aactual[i]=Anew[i];//Actualizo actual con respecto a nuevo.
+    }
+
+    for(int i=0; i<tf;i++){
+    	for(int i=0; i<npuntos; i++)
+    	{
+    	outfile2  << L[i] << "  " << i << "  " << Aold[i] << "  " << Anew[i]<< "  " << Aactual[i]<< endl;
+    	}
+
+    }
+    
+
+    outfile2.close();
+
+    
 }
